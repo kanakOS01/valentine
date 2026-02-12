@@ -160,7 +160,9 @@ h1.title{
 
 <!-- PROPOSAL -->
 <div id="proposal-screen" class="hidden">
-    <h1 class="proposal-text">Will you be my valentine?</h1>
+    <h1 class="proposal-text">
+        <span class="person-name"></span>, Will you be my valentine?
+    </h1>
     <button id="yes-btn" class="heart-btn">Yes</button>
     <button id="no-btn" class="heart-btn secondary-btn">No</button>
 </div>
@@ -174,7 +176,7 @@ h1.title{
 
     <p class="love-message">
         Now you are locked in! ❤️ <br>
-        I love you
+        I love you, <span class="person-name"></span> 🌻
     </p>
 
 </div>
@@ -186,14 +188,25 @@ h1.title{
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
 
+
+const params = new URLSearchParams(window.location.search);
+
+// Get name value
+const nameFromURL = params.get("name") || "Love";
+// fallback if no name provided
+
+// Inject into HTML
+document.querySelectorAll(".person-name").forEach(el => {
+    el.textContent = nameFromURL;
+});
+
 const password="hasnain";
 
 const thoughts=[
-{question:"One thing I want to tell you today",answer:"you are the love of my life 💕"},
-<!--{question:"What do I feel when I think about you?",answer:"My heart fills with butterflies 💕✨"},-->
-<!--{question:"Promise from my heart",answer:"I will keep choosing you again and again ❤️✨"},-->
-<!--{question:"One promise I want to make...",answer:"To always be by your side."},-->
-<!--{question:"Ready for the most important question?",answer:"Take a deep breath 😘"}-->
+{question:`${nameFromURL}, One thing I want to tell you today`,answer:"you are the love of my life 💕"},
+{ question: "A promise from my heart", answer: "I will choose you in every lifetime ❤️" },
+{ question: "What is our relationship status?", answer: "Official partners in crime and snacks 🍟😜" },
+{ question: `${nameFromURL}, Ready for the most important question?`, answer: "Take a deep breath… this one matters 💫" }
 ];
 
 let currentThoughtIndex=0;

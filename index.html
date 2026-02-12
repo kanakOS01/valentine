@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be My Valentine?</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Sacramento&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary-color: #ff4d6d;
+    --secondary-color: #ff8fa3;
+    --bg-color: #fff0f3;
+    --text-color: #590d22;
+    --accent-color: #c9184a;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    background-color: var(--bg-color);
+    font-family:'Pacifico',cursive;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    color:var(--text-color);
+}
+
+.container{
+    text-align:center;
+    width:100%;
+    max-width:600px;
+    padding:20px;
+}
+
+h1.title{
+    font-size:3rem;
+    margin-bottom:10px;
+    color:var(--accent-color);
+}
+
+.subtitle{
+    font-size:2rem;
+    margin-bottom:30px;
+    font-family:'Sacramento',cursive;
+
+}
+
+.hidden{display:none !important;}
+
+#password-input{
+    padding:15px;
+    border-radius:30px;
+    border:2px solid var(--secondary-color);
+    width:80%;
+    max-width:300px;
+    font-size:1.2rem;
+    text-align:center;
+}
+
+.action-btn{
+    background-color:var(--primary-color);
+    color:white;
+    border:none;
+    padding:12px 30px;
+    font-size:1.2rem;
+    border-radius:50px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    margin-bottom:20px;
+}
+
+.proposal-text{
+    font-size:2.5rem;
+    margin-bottom:40px;
+}
+
+.heart-btn{
+    padding:15px 40px;
+    font-size:1.3rem;
+    border-radius:50px;
+    border:none;
+    cursor:pointer;
+    background:var(--primary-color);
+    color:white;
+}
+
+.secondary-btn{
+    background:white;
+    color:var(--primary-color);
+    border:2px solid var(--primary-color);
+}
+
+.progress-dots{margin-top:20px;}
+.dot{
+    width:10px;
+    height:10px;
+    background:#ff8fa3;
+    border-radius:50%;
+    display:inline-block;
+    margin:0 5px;
+}
+.dot.active{background:#ff4d6d;}
+
+.love-message{
+    font-size:2rem;
+    margin-top:20px;
+}
+    .heart-container{
+    width:300px;
+    height:300px;
+    margin:20px auto;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.photo{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- PASSWORD -->
+<div id="password-screen">
+    <h1 class="title">Love Login</h1>
+    <p class="subtitle">Enter the secret password to my heart:</p>
+    <input type="password" id="password-input" placeholder="Secret Password..." />
+    <br>
+    <button id="login-btn" class="action-btn">Enter ❤️</button>
+    <p id="error-msg" class="hidden">Wrong password!</p>
+</div>
+
+<!-- THOUGHTS -->
+<div id="thoughts-screen" class="hidden">
+    <div class="card">
+        <h2 id="thought-question"></h2>
+        <p id="thought-answer" class="hidden"></p>
+        <button id="next-thought-btn" class="action-btn">Next</button>
+    </div>
+    <div id="progress-dots" class="progress-dots"></div>
+</div>
+
+<!-- PROPOSAL -->
+<div id="proposal-screen" class="hidden">
+    <h1 class="proposal-text">Will you be my valentine?</h1>
+    <button id="yes-btn" class="heart-btn">Yes</button>
+    <button id="no-btn" class="heart-btn secondary-btn">No</button>
+</div>
+
+<!-- SUCCESS -->
+<div id="success-screen" class="hidden">
+
+    <div class="heart-container">
+        <img src="images/valentine.png" alt="Us" class="photo">
+    </div>
+
+    <p class="love-message">
+        Now you are locked in! ❤️ <br>
+        I love you
+    </p>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+const password="hasnain";
+
+const thoughts=[
+{question:"One thing I want to tell you today",answer:"you are the love of my life 💕"},
+<!--{question:"What do I feel when I think about you?",answer:"My heart fills with butterflies 💕✨"},-->
+<!--{question:"Promise from my heart",answer:"I will keep choosing you again and again ❤️✨"},-->
+<!--{question:"One promise I want to make...",answer:"To always be by your side."},-->
+<!--{question:"Ready for the most important question?",answer:"Take a deep breath 😘"}-->
+];
+
+let currentThoughtIndex=0;
+let showingAnswer=false;
+
+const passwordScreen=document.getElementById('password-screen');
+const thoughtsScreen=document.getElementById('thoughts-screen');
+const proposalScreen=document.getElementById('proposal-screen');
+const successScreen=document.getElementById('success-screen');
+
+const passwordInput=document.getElementById('password-input');
+const loginBtn=document.getElementById('login-btn');
+const errorMsg=document.getElementById('error-msg');
+
+const thoughtQuestion=document.getElementById('thought-question');
+const thoughtAnswer=document.getElementById('thought-answer');
+const nextThoughtBtn=document.getElementById('next-thought-btn');
+const progressDotsContainer=document.getElementById('progress-dots');
+
+const yesBtn=document.getElementById('yes-btn');
+const noBtn=document.getElementById('no-btn');
+
+loginBtn.onclick=checkPassword;
+passwordInput.addEventListener('keypress',e=>{if(e.key==="Enter")checkPassword();});
+
+function checkPassword(){
+    if(passwordInput.value.toLowerCase()===password){
+        passwordScreen.classList.add("hidden");
+        thoughtsScreen.classList.remove("hidden");
+        initThoughts();
+    }else{
+        errorMsg.classList.remove("hidden");
+        setTimeout(()=>errorMsg.classList.add("hidden"),2000);
+    }
+}
+
+function initThoughts(){
+    progressDotsContainer.innerHTML="";
+    thoughts.forEach((_,i)=>{
+        const dot=document.createElement("span");
+        dot.className="dot";
+        if(i===0)dot.classList.add("active");
+        progressDotsContainer.appendChild(dot);
+    });
+    loadThought(0);
+}
+
+function loadThought(index){
+    thoughtQuestion.textContent=thoughts[index].question;
+    thoughtAnswer.textContent=thoughts[index].answer;
+    thoughtAnswer.classList.add("hidden");
+    nextThoughtBtn.textContent="See Answer ❤️";
+    showingAnswer=false;
+
+    document.querySelectorAll(".dot").forEach((d,i)=>{
+        d.classList.toggle("active",i===index);
+    });
+}
+
+nextThoughtBtn.onclick=()=>{
+    if(!showingAnswer){
+        thoughtAnswer.classList.remove("hidden");
+        nextThoughtBtn.textContent="Next ➡️";
+        showingAnswer=true;
+    }else{
+        currentThoughtIndex++;
+        if(currentThoughtIndex<thoughts.length){
+            loadThought(currentThoughtIndex);
+        }else{
+            thoughtsScreen.classList.add("hidden");
+            proposalScreen.classList.remove("hidden");
+        }
+    }
+};
+
+const moveNoBtn=()=>{
+    const x=Math.random()*(window.innerWidth-100);
+    const y=Math.random()*(window.innerHeight-50);
+    noBtn.style.position="fixed";
+    noBtn.style.left=x+"px";
+    noBtn.style.top=y+"px";
+};
+noBtn.onmouseover=moveNoBtn;
+noBtn.onclick=moveNoBtn;
+
+yesBtn.onclick=()=>{
+    proposalScreen.classList.add("hidden");
+    successScreen.classList.remove("hidden");
+    confetti();
+};
+
+});
+</script>
+
+</body>
+</html>

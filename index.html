@@ -197,8 +197,8 @@
             </div>
 
             <p class="love-message">
-                Fas gayi jaal mei khikhikhi <br>
-                Love you, <span class="person-name"></span> 🌻
+                Fas gayi jaal mei khikhikhi 😘😘 <br>
+                🌻❤️🌻 Love you 🌻❤️🌻
             </p>
 
         </div>
@@ -297,6 +297,10 @@
                     setTimeout(() => {
                         punishmentScreen.classList.add("hidden");
                         proposalScreen.classList.remove("hidden");
+                        // Reset No button position
+                        noBtn.style.position = "initial";
+                        noBtn.style.left = "";
+                        noBtn.style.top = "";
                     }, 3000); // Show for 3 seconds
                     return;
                 }
